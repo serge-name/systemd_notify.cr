@@ -8,7 +8,7 @@ spawn do
   end
 end
 
-sn = SystemdNotify.new.ready
+SystemdNotify.new.ready
 
 loop do
   # main loop, do nothing
