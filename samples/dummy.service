@@ -1,0 +1,5 @@
+[Service]
+Type=notify
+ExecStart=/usr/local/bin/dummy
+Restart=no
+WatchdogSec=3s
