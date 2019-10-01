@@ -2,7 +2,7 @@ require "systemd_notify"
 
 spawn do
   loop do
-    STDERR.puts Time.now
+    STDERR.puts Time.local
     STDERR.flush
     sleep(1)
   end

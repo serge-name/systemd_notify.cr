@@ -1,5 +1,5 @@
 name: systemd_notify
-version: 0.1.0
+version: 0.1.1
 license: MIT
 authors:
   - Serge Pokhodyaev <snp@z9.ru>
@@ -7,4 +7,4 @@ authors:
 description: |
   Sends startup and periodical notifications to systemd
 
-crystal: 0.28.0
+crystal: 0.31.0
