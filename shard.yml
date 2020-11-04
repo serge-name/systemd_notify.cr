@@ -7,4 +7,4 @@ authors:
 description: |
   Sends startup and periodical notifications to systemd
 
-crystal: 0.31.0
+crystal: 0.35.1

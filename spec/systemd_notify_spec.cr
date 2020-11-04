@@ -6,7 +6,7 @@ require "./mock_unix_socket"
 require "../src/systemd_notify"
 
 SYSTEMD_SOCKET_MOCK_PATH = "/nonexistent"
-SYSTEMD_WATCHDOG_SEC = 2
+SYSTEMD_WATCHDOG_SEC     = 2
 
 describe SystemdNotify do
   context "when started not as a service" do
@@ -33,7 +33,7 @@ describe SystemdNotify do
     describe ".new" do
       it "raises an exception" do
         ENV.mock_env_set("NOTIFY_SOCKET", SYSTEMD_SOCKET_MOCK_PATH)
-        expect_raises(Errno, "connect: No such file or directory") do
+        expect_raises(Socket::ConnectError, "connect: No such file or directory") do
           SystemdNotify.new
         end
       end
@@ -69,6 +69,12 @@ describe SystemdNotify do
     ENV.mock_env_set("WATCHDOG_USEC", (SYSTEMD_WATCHDOG_SEC * 1_000_000).to_s)
     UNIXSocket.mock_path = SYSTEMD_SOCKET_MOCK_PATH
     sn = SystemdNotify.new
+
+    describe ".supported?" do
+      it "returns true" do
+        sn.supported?.should be_true
+      end
+    end
 
     describe ".use_watchdog?" do
       it "returns true" do
