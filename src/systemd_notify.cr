@@ -2,21 +2,22 @@ require "socket"
 
 class SystemdNotify
   @socket : UNIXSocket?
-  @tmout : Float64?
+  @timeout : Float64?
 
   def initialize
     @socket = get_socket
-    @tmout = get_tmout
+    @timeout = get_timeout
   end
 
   def ready
     return unless supported?
 
-    send_ready
+    notify_ready
+
     if use_watchdog?
       spawn do
         loop do
-          watchdog_notify
+          notify_watchdog
           wait
         end
       end
@@ -28,14 +29,14 @@ class SystemdNotify
   end
 
   def use_watchdog?
-    !@tmout.nil?
+    !@timeout.nil?
   end
 
-  private def send_ready
+  private def notify_ready
     send_message("READY=1")
   end
 
-  private def watchdog_notify
+  private def notify_watchdog
     send_message("WATCHDOG=1")
   end
 
@@ -47,7 +48,7 @@ class SystemdNotify
     end
   end
 
-  private def get_tmout : Float64?
+  private def get_timeout : Float64?
     # FIXME: check whether timeout is too small
     ENV["WATCHDOG_USEC"]?.try { |t|
       t.to_f64 / 1_000_000
@@ -59,7 +60,7 @@ class SystemdNotify
   end
 
   private def wait
-    @tmout.try { |t|
+    @timeout.try { |t|
       sleep(t)
     }
   end
