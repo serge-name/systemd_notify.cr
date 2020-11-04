@@ -10,6 +10,8 @@ class SystemdNotify
   end
 
   def ready
+    return unless supported?
+
     send_ready
     if use_watchdog?
       spawn do
@@ -25,18 +27,16 @@ class SystemdNotify
     !@socket.nil?
   end
 
-  def send_ready
-    send_message("READY=1")
-  end
-
   def use_watchdog?
     !@tmout.nil?
   end
 
-  def watchdog_notify
-    if use_watchdog?
-      send_message("WATCHDOG=1")
-    end
+  private def send_ready
+    send_message("READY=1")
+  end
+
+  private def watchdog_notify
+    send_message("WATCHDOG=1")
   end
 
   private def get_socket : UNIXSocket?
@@ -48,16 +48,14 @@ class SystemdNotify
   end
 
   private def get_tmout : Float64?
+    # FIXME: check whether timeout is too small
     ENV["WATCHDOG_USEC"]?.try { |t|
       t.to_f64 / 1_000_000
-      # FIXME: check whether timeout is too small
     }
   end
 
   private def send_message(msg)
-    unless @socket.nil?
-      @socket.as(UNIXSocket).puts(msg)
-    end
+    @socket.as(UNIXSocket).puts(msg)
   end
 
   private def wait
