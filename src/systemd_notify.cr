@@ -48,10 +48,11 @@ class SystemdNotify
     end
   end
 
+  # The doc suggest notifying halfway through the timeout
+  # https://www.freedesktop.org/software/systemd/man/sd_watchdog_enabled.html
   private def get_timeout : Float64?
-    # FIXME: check whether timeout is too small
     ENV["WATCHDOG_USEC"]?.try { |t|
-      t.to_f64 / 1_000_000
+      t.to_f64 / 1_000_000 / 2
     }
   end
 
